@@ -1,11 +1,11 @@
 [project]
-name = "frappe-bench"
-description = "CLI to manage Multi-tenant deployments for Frappe apps"
+name = "capkpi-bench"
+description = "CLI to manage Multi-tenant deployments for CapKPI apps"
 readme = "README.md"
 license = "GPL-3.0-only"
 requires-python = ">=3.7"
 authors = [
-    { name = "Frappe Technologies Pvt Ltd", email = "developers@frappe.io" },
+    { name = "CapKPI Technologies Pvt Ltd", email = "developers@capkpi.com" },
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -37,10 +37,10 @@ dynamic = [
 bench = "bench.cli:cli"
 
 [project.urls]
-Changelog = "https://github.com/frappe/bench/releases"
-Documentation = "https://frappeframework.com/docs/user/en/bench"
-Homepage = "https://frappe.io/bench"
-Source = "https://github.com/frappe/bench"
+Changelog = "https://github.com/capkpi/bench/releases"
+Documentation = "https://capkpiframework.com/docs/user/en/bench"
+Homepage = "https://capkpi.com/bench"
+Source = "https://github.com/capkpi/bench"
 
 [build-system]
 requires = [

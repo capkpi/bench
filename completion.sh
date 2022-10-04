@@ -4,16 +4,16 @@ _bench_completion() {
                    COMP_CWORD=$COMP_CWORD \
                    _BENCH_COMPLETE=complete $1 ) )
     if [ -d "sites" ]; then
-        # Also add frappe commands if present
+        # Also add capkpi commands if present
 
         # bench_helper.py expects to be executed from "sites" directory
         cd sites
 
-        # All frappe commands are subcommands under "bench frappe"
-        # Frappe is only installed in virtualenv "env" so use appropriate python executable
-        COMPREPLY+=( $( COMP_WORDS="bench frappe "${COMP_WORDS[@]:1} \
+        # All capkpi commands are subcommands under "bench capkpi"
+        # CapKPI is only installed in virtualenv "env" so use appropriate python executable
+        COMPREPLY+=( $( COMP_WORDS="bench capkpi "${COMP_WORDS[@]:1} \
                         COMP_CWORD=$(($COMP_CWORD+1)) \
-                        _BENCH_COMPLETE=complete ../env/bin/python ../apps/frappe/frappe/utils/bench_helper.py ) )
+                        _BENCH_COMPLETE=complete ../env/bin/python ../apps/capkpi/capkpi/utils/bench_helper.py ) )
 
         # If the word before the current cursor position in command typed so far is "--site" then only list sites
         if [ ${COMP_WORDS[COMP_CWORD-1]} == "--site" ]; then

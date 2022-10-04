@@ -1,12 +1,12 @@
 """
 Deprecate archived_sites folder for consistency. This change is
-only for Frappe v14 benches. If not a v14 bench yet, skip this
+only for CapKPI v14 benches. If not a v14 bench yet, skip this
 patch and try again later.
 
 1. Rename folder `./archived_sites` to `./archived/sites`
 2. Create a symlink `./archived_sites` => `./archived/sites`
 
-Corresponding changes in frappe/frappe via https://github.com/frappe/frappe/pull/15060
+Corresponding changes in capkpi/capkpi via https://github.com/capkpi/capkpi/pull/15060
 """
 import os
 from pathlib import Path
@@ -17,9 +17,9 @@ from semantic_version import Version
 
 
 def execute(bench_path):
-	frappe_version = Version(get_current_version("frappe"))
+	capkpi_version = Version(get_current_version("capkpi"))
 
-	if frappe_version.major < 14 or os.name != "posix":
+	if capkpi_version.major < 14 or os.name != "posix":
 		# Returning False means patch has been skipped
 		return False
 

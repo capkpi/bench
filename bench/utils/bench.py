@@ -53,9 +53,9 @@ def update_node_packages(bench_path=".", apps=None):
 
 	from bench.utils.app import get_develop_version
 
-	v = LooseVersion(get_develop_version("frappe", bench_path=bench_path))
+	v = LooseVersion(get_develop_version("capkpi", bench_path=bench_path))
 
-	# After rollup was merged, frappe_version = 10.1
+	# After rollup was merged, capkpi_version = 10.1
 	# if develop_verion is 11 and up, only then install yarn
 	if v < LooseVersion("11.x.x-develop"):
 		update_npm_packages(bench_path, apps=apps)
@@ -299,7 +299,7 @@ def restart_supervisor_processes(bench_path=".", web_workers=False):
 
 		# backward compatibility
 		else:
-			group = "frappe:"
+			group = "capkpi:"
 
 		bench.run(f"{sudo}supervisorctl restart {group}")
 
@@ -336,13 +336,13 @@ def handle_version_upgrade(version_upgrade, bench_path, force, reset, conf):
 	if version_upgrade[0]:
 		if force:
 			log(
-				"""Force flag has been used for a major version change in Frappe and it's apps.
+				"""Force flag has been used for a major version change in CapKPI and it's apps.
 This will take significant time to migrate and might break custom apps.""",
 				level=3,
 			)
 		else:
 			print(
-				f"""This update will cause a major version change in Frappe/ERPNext from {version_upgrade[1]} to {version_upgrade[2]}.
+				f"""This update will cause a major version change in CapKPI/ERP from {version_upgrade[1]} to {version_upgrade[2]}.
 This would take significant time to migrate and might break custom apps."""
 			)
 			click.confirm("Do you want to continue?", abort=True)
@@ -448,8 +448,8 @@ def update(
 	update_config(conf, bench_path=bench_path)
 
 	print(
-		"_" * 80 + "\nBench: Deployment tool for Frappe and Frappe Applications"
-		" (https://frappe.io/bench).\nOpen source depends on your contributions, so do"
+		"_" * 80 + "\nBench: Deployment tool for CapKPI and CapKPI Applications"
+		" (https://capkpi.com/bench).\nOpen source depends on your contributions, so do"
 		" give back by submitting bug reports, patches and fixes and be a part of the"
 		" community :)"
 	)
@@ -503,7 +503,7 @@ def remove_backups_crontab(bench_path="."):
 	logger.log("removing backup cronjob")
 
 	bench_dir = os.path.abspath(bench_path)
-	user = Bench(bench_dir).conf.get("frappe_user")
+	user = Bench(bench_dir).conf.get("capkpi_user")
 	logfile = os.path.join(bench_dir, "logs", "backup.log")
 	system_crontab = CronTab(user=user)
 	backup_command = f"cd {bench_dir} && {sys.argv[0]} --verbose --site all backup"
@@ -594,7 +594,7 @@ def validate_branch():
 	apps = Bench(".").apps
 
 	installed_apps = set(apps)
-	check_apps = {"frappe", "erpnext"}
+	check_apps = {"capkpi", "erp"}
 	intersection_apps = installed_apps.intersection(check_apps)
 
 	for app in intersection_apps:
@@ -604,7 +604,7 @@ def validate_branch():
 			print(
 				"""'master' branch is renamed to 'version-11' since 'version-12' release.
 As of January 2020, the following branches are
-version		Frappe			ERPNext
+version		CapKPI			ERP
 11		version-11		version-11
 12		version-12		version-12
 13		version-13		version-13

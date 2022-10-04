@@ -1,0 +1,25 @@
+---
+- name: Install deps
+  yum:
+    name:
+      - policycoreutils-python
+      - selinux-policy-devel
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+- name: Check enabled SELinux modules
+  shell: semanage module -l
+  register: enabled_modules
+  when: ansible_distribution == 'CentOS'
+
+- name: Copy capkpi_selinux policy
+  copy: src=capkpi_selinux.te dest=/root/capkpi_selinux.te
+  register: dest_capkpi_selinux_te
+  when: ansible_distribution == 'CentOS'
+
+- name: Compile capkpi_selinux policy
+  shell: "make -f /usr/share/selinux/devel/Makefile capkpi_selinux.pp && semodule -i capkpi_selinux.pp"
+  args:
+    chdir: /root/
+  when: "ansible_distribution == 'CentOS' and enabled_modules.stdout.find('capkpi_selinux') == -1 or dest_capkpi_selinux_te.changed"
+...

@@ -17,11 +17,11 @@ from bench.utils import (
 	paths_in_bench,
 	exec_cmd,
 	is_bench_directory,
-	is_frappe_app,
+	is_capkpi_app,
 	get_cmd_output,
 	get_git_version,
 	log,
-	run_frappe_cmd,
+	run_capkpi_cmd,
 )
 from bench.utils.bench import (
 	validate_app_installed_on_sites,
@@ -137,7 +137,7 @@ class Bench(Base, Validator):
 	@step(title="Building Bench Assets", success="Bench Assets Built")
 	def build(self):
 		# build assets & stuff
-		run_frappe_cmd("build", bench_path=self.name)
+		run_capkpi_cmd("build", bench_path=self.name)
 
 	@step(title="Reloading Bench Processes", success="Bench Processes Reloaded")
 	def reload(self, web=False, supervisor=True, systemd=True):
@@ -191,10 +191,10 @@ class BenchApps(MutableSequence):
 			required = []
 		if self.apps and not os.path.exists(self.states_path):
 			# idx according to apps listed in apps.txt (backwards compatibility)
-			# Keeping frappe as the first app.
-			if "frappe" in self.apps:
-				self.apps.remove("frappe")
-				self.apps.insert(0, "frappe")
+			# Keeping capkpi as the first app.
+			if "capkpi" in self.apps:
+				self.apps.remove("capkpi")
+				self.apps.insert(0, "capkpi")
 				with open(self.bench.apps_txt, "w") as f:
 					f.write("\n".join(self.apps))
 
@@ -268,10 +268,10 @@ class BenchApps(MutableSequence):
 			self.apps = [
 				x
 				for x in os.listdir(os.path.join(self.bench.name, "apps"))
-				if is_frappe_app(os.path.join(self.bench.name, "apps", x))
+				if is_capkpi_app(os.path.join(self.bench.name, "apps", x))
 			]
-			self.apps.remove("frappe")
-			self.apps.insert(0, "frappe")
+			self.apps.remove("capkpi")
+			self.apps.insert(0, "capkpi")
 		except FileNotFoundError:
 			self.apps = []
 
@@ -336,7 +336,7 @@ class BenchSetup(Base):
 		"""Setup env folder
 		- create env if not exists
 		- upgrade env pip
-		- install frappe python dependencies
+		- install capkpi python dependencies
 		"""
 		import bench.cli
 		import click
@@ -345,7 +345,7 @@ class BenchSetup(Base):
 
 		click.secho("Setting Up Environment", fg="yellow")
 
-		frappe = os.path.join(self.bench.name, "apps", "frappe")
+		capkpi = os.path.join(self.bench.name, "apps", "capkpi")
 		quiet_flag = "" if verbose else "--quiet"
 
 		if not os.path.exists(self.bench.python):
@@ -354,9 +354,9 @@ class BenchSetup(Base):
 
 		self.pip()
 
-		if os.path.exists(frappe):
+		if os.path.exists(capkpi):
 			self.run(
-				f"{self.bench.python} -m pip install {quiet_flag} --upgrade -e {frappe}",
+				f"{self.bench.python} -m pip install {quiet_flag} --upgrade -e {capkpi}",
 				cwd=self.bench.name,
 			)
 
@@ -410,7 +410,7 @@ class BenchSetup(Base):
 		from crontab import CronTab
 
 		bench_dir = os.path.abspath(self.bench.name)
-		user = self.bench.conf.get("frappe_user")
+		user = self.bench.conf.get("capkpi_user")
 		logfile = os.path.join(bench_dir, "logs", "backup.log")
 		system_crontab = CronTab(user=user)
 		backup_command = f"cd {bench_dir} && {sys.argv[0]} --verbose --site all backup"

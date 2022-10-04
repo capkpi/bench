@@ -98,8 +98,8 @@ def check_distribution_compatibility():
 
 
 def import_with_install(package):
-	# copied from https://discuss.erpnext.com/u/nikunj_patel
-	# https://discuss.erpnext.com/t/easy-install-setup-guide-for-erpnext-installation-on-ubuntu-20-04-lts-with-some-modification-of-course/62375/5
+	# copied from https://discuss.capkpi.com/u/nikunj_patel
+	# https://discuss.capkpi.com/t/easy-install-setup-guide-for-erp-installation-on-ubuntu-20-04-lts-with-some-modification-of-course/62375/5
 	# need to move to top said v13 for fully python3 era
 	import importlib
 
@@ -215,7 +215,7 @@ def install_bench(args):
 
 	if not args.user:
 		if args.production:
-			args.user = 'frappe'
+			args.user = 'capkpi'
 
 		elif 'SUDO_USER' in os.environ:
 			args.user = os.environ['SUDO_USER']
@@ -235,7 +235,7 @@ def install_bench(args):
 
 	# create user if not exists
 	extra_vars = vars(args)
-	extra_vars.update(frappe_user=args.user)
+	extra_vars.update(capkpi_user=args.user)
 
 	extra_vars.update(user_directory=get_user_home_directory(args.user))
 
@@ -252,29 +252,29 @@ def install_bench(args):
 		extra_vars.update(max_worker_connections=multiprocessing.cpu_count() * 1024)
 
 	if args.version <= 10:
-		frappe_branch = "{0}.x.x".format(args.version)
-		erpnext_branch = "{0}.x.x".format(args.version)
+		capkpi_branch = "{0}.x.x".format(args.version)
+		erp_branch = "{0}.x.x".format(args.version)
 	else:
-		frappe_branch = "version-{0}".format(args.version)
-		erpnext_branch = "version-{0}".format(args.version)
+		capkpi_branch = "version-{0}".format(args.version)
+		erp_branch = "version-{0}".format(args.version)
 
-	# Allow override of frappe_branch and erpnext_branch, regardless of args.version (which always has a default set)
-	if args.frappe_branch:
-		frappe_branch = args.frappe_branch
-	if args.erpnext_branch:
-		erpnext_branch = args.erpnext_branch
+	# Allow override of capkpi_branch and erp_branch, regardless of args.version (which always has a default set)
+	if args.capkpi_branch:
+		capkpi_branch = args.capkpi_branch
+	if args.erp_branch:
+		erp_branch = args.erp_branch
 
-	extra_vars.update(frappe_branch=frappe_branch)
-	extra_vars.update(erpnext_branch=erpnext_branch)
+	extra_vars.update(capkpi_branch=capkpi_branch)
+	extra_vars.update(erp_branch=erp_branch)
 
-	bench_name = 'frappe-bench' if not args.bench_name else args.bench_name
+	bench_name = 'capkpi-bench' if not args.bench_name else args.bench_name
 	extra_vars.update(bench_name=bench_name)
 
-	# Will install ERPNext production setup by default
-	if args.without_erpnext:
-		log("Initializing bench {bench_name}:\n\tFrappe Branch: {frappe_branch}\n\tERPNext will not be installed due to --without-erpnext".format(bench_name=bench_name, frappe_branch=frappe_branch))
+	# Will install ERP production setup by default
+	if args.without_erp:
+		log("Initializing bench {bench_name}:\n\tCapKPI Branch: {capkpi_branch}\n\tERP will not be installed due to --without-erp".format(bench_name=bench_name, capkpi_branch=capkpi_branch))
 	else:
-		log("Initializing bench {bench_name}:\n\tFrappe Branch: {frappe_branch}\n\tERPNext Branch: {erpnext_branch}".format(bench_name=bench_name, frappe_branch=frappe_branch, erpnext_branch=erpnext_branch))
+		log("Initializing bench {bench_name}:\n\tCapKPI Branch: {capkpi_branch}\n\tERP Branch: {erp_branch}".format(bench_name=bench_name, capkpi_branch=capkpi_branch, erp_branch=erp_branch))
 	run_playbook('site.yml', sudo=True, extra_vars=extra_vars)
 
 	if os.path.exists(tmp_bench_repo):
@@ -284,7 +284,7 @@ def install_bench(args):
 def clone_bench_repo(args):
 	'''Clones the bench repository in the user folder'''
 	branch = args.bench_branch or 'develop'
-	repo_url = args.repo_url or 'https://github.com/frappe/bench'
+	repo_url = args.repo_url or 'https://github.com/capkpi/bench'
 
 	if os.path.exists(tmp_bench_repo):
 		log('Not cloning already existing Bench repository at {tmp_bench_repo}'.format(tmp_bench_repo=tmp_bench_repo))
@@ -314,7 +314,7 @@ def get_passwords(args):
 	Returns a dict of passwords for further use
 	and creates passwords.txt in the bench user's home directory
 	"""
-	log("Input MySQL and Frappe Administrator passwords:")
+	log("Input MySQL and CapKPI Administrator passwords:")
 	ignore_prompt = args.run_travis or args.without_bench_setup
 	mysql_root_password, admin_password = '', ''
 	passwords_file_path = os.path.join(os.path.expanduser('~' + args.user), 'passwords.txt')
@@ -423,26 +423,26 @@ def setup_script_requirements():
 def parse_commandline_args():
 	import argparse
 
-	parser = argparse.ArgumentParser(description='Frappe Installer')
+	parser = argparse.ArgumentParser(description='CapKPI Installer')
 	# Arguments develop and production are mutually exclusive both can't be specified together.
 	# Hence, we need to create a group for discouraging use of both options at the same time.
 	args_group = parser.add_mutually_exclusive_group()
 
 	args_group.add_argument('--develop', dest='develop', action='store_true', default=False, help='Install developer setup')
 	args_group.add_argument('--production', dest='production', action='store_true', default=False, help='Setup Production environment for bench')
-	parser.add_argument('--site', dest='site', action='store', default='site1.local', help='Specify name for your first ERPNext site')
+	parser.add_argument('--site', dest='site', action='store', default='site1.local', help='Specify name for your first ERP site')
 	parser.add_argument('--without-site', dest='without_site', action='store_true', default=False, help='Do not create a new site')
 	parser.add_argument('--verbose', dest='verbose', action='store_true', default=False, help='Run the script in verbose mode')
-	parser.add_argument('--user', dest='user', help='Install frappe-bench for this user')
+	parser.add_argument('--user', dest='user', help='Install capkpi-bench for this user')
 	parser.add_argument('--bench-branch', dest='bench_branch', help='Clone a particular branch of bench repository')
 	parser.add_argument('--repo-url', dest='repo_url', help='Clone bench from the given url')
-	parser.add_argument('--frappe-repo-url', dest='frappe_repo_url', action='store', default='https://github.com/frappe/frappe', help='Clone frappe from the given url')
-	parser.add_argument('--frappe-branch', dest='frappe_branch', action='store', help='Clone a particular branch of frappe')
-	parser.add_argument('--erpnext-repo-url', dest='erpnext_repo_url', action='store', default='https://github.com/frappe/erpnext', help='Clone erpnext from the given url')
-	parser.add_argument('--erpnext-branch', dest='erpnext_branch', action='store', help='Clone a particular branch of erpnext')
-	parser.add_argument('--without-erpnext', dest='without_erpnext', action='store_true', default=False, help='Prevent fetching ERPNext')
+	parser.add_argument('--capkpi-repo-url', dest='capkpi_repo_url', action='store', default='https://github.com/capkpi/capkpi', help='Clone capkpi from the given url')
+	parser.add_argument('--capkpi-branch', dest='capkpi_branch', action='store', help='Clone a particular branch of capkpi')
+	parser.add_argument('--erp-repo-url', dest='erp_repo_url', action='store', default='https://github.com/capkpi/erp', help='Clone erp from the given url')
+	parser.add_argument('--erp-branch', dest='erp_branch', action='store', help='Clone a particular branch of erp')
+	parser.add_argument('--without-erp', dest='without_erp', action='store_true', default=False, help='Prevent fetching ERP')
 	# direct provision to install versions
-	parser.add_argument('--version', dest='version', action='store', default=13, type=int, help='Clone particular version of frappe and erpnext')
+	parser.add_argument('--version', dest='version', action='store', default=13, type=int, help='Clone particular version of capkpi and erp')
 	# To enable testing of script using Travis, this should skip the prompt
 	parser.add_argument('--run-travis', dest='run_travis', action='store_true', default=False, help=argparse.SUPPRESS)
 	parser.add_argument('--without-bench-setup', dest='without_bench_setup', action='store_true', default=False, help=argparse.SUPPRESS)
@@ -452,7 +452,7 @@ def parse_commandline_args():
 	parser.add_argument('--mysql-root-password', dest='mysql_root_password', help='Set mysql root password')
 	parser.add_argument('--mariadb-version', dest='mariadb_version', default='10.4', help='Specify mariadb version')
 	parser.add_argument('--admin-password', dest='admin_password', help='Set admin password')
-	parser.add_argument('--bench-name', dest='bench_name', help='Create bench with specified name. Default name is frappe-bench')
+	parser.add_argument('--bench-name', dest='bench_name', help='Create bench with specified name. Default name is capkpi-bench')
 	# Python interpreter to be used
 	parser.add_argument('--python', dest='python', default='python3', help=argparse.SUPPRESS)
 	# LXC Support
@@ -496,4 +496,4 @@ if __name__ == '__main__':
 		check_environment()
 		install_bench(args)
 
-	log("Bench + Frappe + ERPNext has been successfully installed!")
+	log("Bench + CapKPI + ERP has been successfully installed!")

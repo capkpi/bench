@@ -14,10 +14,10 @@ from bench.tests.test_base import FRAPPE_BRANCH, TestBenchBase
 from bench.bench import Bench
 
 
-# changed from frappe_theme because it wasn't maintained and incompatible,
-# chat app & wiki was breaking too. hopefully frappe_docs will be maintained
-# for longer since docs.erpnext.com is powered by it ;)
-TEST_FRAPPE_APP = "frappe_docs"
+# changed from capkpi_theme because it wasn't maintained and incompatible,
+# chat app & wiki was breaking too. hopefully capkpi_docs will be maintained
+# for longer since docs.capkpi.com is powered by it ;)
+TEST_FRAPPE_APP = "capkpi_docs"
 
 
 class TestBenchInit(TestBenchBase):
@@ -26,16 +26,16 @@ class TestBenchInit(TestBenchBase):
 
 	def test_init(self, bench_name="test-bench", **kwargs):
 		self.init_bench(bench_name, **kwargs)
-		app = App("file:///tmp/frappe")
+		app = App("file:///tmp/capkpi")
 		self.assertTupleEqual(
 			(app.mount_path, app.url, app.repo, app.org),
-			("/tmp/frappe", "file:///tmp/frappe", "frappe", "frappe"),
+			("/tmp/capkpi", "file:///tmp/capkpi", "capkpi", "capkpi"),
 		)
 		self.assert_folders(bench_name)
 		self.assert_virtual_env(bench_name)
 		self.assert_config(bench_name)
 		test_bench = Bench(bench_name)
-		app = App("frappe", bench=test_bench)
+		app = App("capkpi", bench=test_bench)
 		self.assertEqual(app.from_apps, True)
 
 	def basic(self):
@@ -174,7 +174,7 @@ class TestBenchInit(TestBenchBase):
 	def test_switch_to_branch(self):
 		self.init_bench("test-bench")
 		bench_path = os.path.join(self.benches_path, "test-bench")
-		app_path = os.path.join(bench_path, "apps", "frappe")
+		app_path = os.path.join(bench_path, "apps", "capkpi")
 
 		# * chore: change to 14 when avalible
 		prevoius_branch = "version-13"
@@ -183,7 +183,7 @@ class TestBenchInit(TestBenchBase):
 			prevoius_branch = f"version-{int(FRAPPE_BRANCH.split('-')[1]) - 1}"
 
 		successful_switch = not exec_cmd(
-			f"bench switch-to-branch {prevoius_branch} frappe --upgrade",
+			f"bench switch-to-branch {prevoius_branch} capkpi --upgrade",
 			cwd=bench_path,
 			_raise=False,
 		)
@@ -192,7 +192,7 @@ class TestBenchInit(TestBenchBase):
 			self.assertEqual(prevoius_branch, app_branch_after_switch)
 
 		successful_switch = not exec_cmd(
-			f"bench switch-to-branch {FRAPPE_BRANCH} frappe --upgrade",
+			f"bench switch-to-branch {FRAPPE_BRANCH} capkpi --upgrade",
 			cwd=bench_path,
 			_raise=False,
 		)

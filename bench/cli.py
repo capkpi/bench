@@ -18,7 +18,7 @@ from bench.utils import (
 	check_latest_version,
 	drop_privileges,
 	find_parent_bench,
-	get_env_frappe_commands,
+	get_env_capkpi_commands,
 	get_cmd_output,
 	is_bench_directory,
 	is_dist_editable,
@@ -93,7 +93,7 @@ def cli():
 		log(
 			"bench is installed in editable mode!\n\nThis is not the recommended mode"
 			" of installation for production. Instead, install the package from PyPI"
-			" with: `pip install frappe-bench`\n",
+			" with: `pip install capkpi-bench`\n",
 			level=3,
 		)
 
@@ -112,7 +112,7 @@ def cli():
 	if len(sys.argv) == 1 or sys.argv[1] == "--help":
 		print(click.Context(bench_command).get_help())
 		if in_bench:
-			print(get_frappe_help())
+			print(get_capkpi_help())
 		return
 
 	_opts = [x.opts + x.secondary_opts for x in bench_command.params]
@@ -127,8 +127,8 @@ def cli():
 			bench_command()
 
 	if in_bench:
-		if cmd_from_sys in get_frappe_commands():
-			frappe_cmd()
+		if cmd_from_sys in get_capkpi_commands():
+			capkpi_cmd()
 		else:
 			app_cmd()
 
@@ -168,7 +168,7 @@ def cmd_requires_root():
 def change_dir():
 	if os.path.exists("config.json") or "init" in sys.argv:
 		return
-	dir_path_file = "/etc/frappe_bench_dir"
+	dir_path_file = "/etc/capkpi_bench_dir"
 	if os.path.exists(dir_path_file):
 		with open(dir_path_file) as f:
 			dir_path = f.read().strip()
@@ -178,10 +178,10 @@ def change_dir():
 
 def change_uid():
 	if is_root() and not cmd_requires_root():
-		frappe_user = bench_config.get("frappe_user")
-		if frappe_user:
-			drop_privileges(uid_name=frappe_user, gid_name=frappe_user)
-			os.environ["HOME"] = pwd.getpwnam(frappe_user).pw_dir
+		capkpi_user = bench_config.get("capkpi_user")
+		if capkpi_user:
+			drop_privileges(uid_name=capkpi_user, gid_name=capkpi_user)
+			os.environ["HOME"] = pwd.getpwnam(capkpi_user).pw_dir
 		else:
 			log(change_uid_msg, level=3)
 			sys.exit(1)
@@ -190,28 +190,28 @@ def change_uid():
 def app_cmd(bench_path="."):
 	f = get_env_cmd("python", bench_path=bench_path)
 	os.chdir(os.path.join(bench_path, "sites"))
-	os.execv(f, [f] + ["-m", "frappe.utils.bench_helper"] + sys.argv[1:])
+	os.execv(f, [f] + ["-m", "capkpi.utils.bench_helper"] + sys.argv[1:])
 
 
-def frappe_cmd(bench_path="."):
+def capkpi_cmd(bench_path="."):
 	f = get_env_cmd("python", bench_path=bench_path)
 	os.chdir(os.path.join(bench_path, "sites"))
-	os.execv(f, [f] + ["-m", "frappe.utils.bench_helper", "frappe"] + sys.argv[1:])
+	os.execv(f, [f] + ["-m", "capkpi.utils.bench_helper", "capkpi"] + sys.argv[1:])
 
 
-def get_frappe_commands():
+def get_capkpi_commands():
 	if not is_bench_directory():
 		return set()
 
-	return set(get_env_frappe_commands())
+	return set(get_env_capkpi_commands())
 
 
-def get_frappe_help(bench_path="."):
+def get_capkpi_help(bench_path="."):
 	python = get_env_cmd("python", bench_path=bench_path)
 	sites_path = os.path.join(bench_path, "sites")
 	try:
 		out = get_cmd_output(
-			f"{python} -m frappe.utils.bench_helper get-frappe-help", cwd=sites_path
+			f"{python} -m capkpi.utils.bench_helper get-capkpi-help", cwd=sites_path
 		)
 		return "\n\nFramework commands:\n" + out.split("Commands:")[1]
 	except Exception:

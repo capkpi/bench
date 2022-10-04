@@ -56,7 +56,7 @@ class TestSetupProduction(TestBenchBase):
 			f = f.read()
 
 			for key in (
-				f"upstream {bench_name}-frappe",
+				f"upstream {bench_name}-capkpi",
 				f"upstream {bench_name}-socketio-server",
 			):
 				self.assertTrue(key in f)
@@ -68,7 +68,7 @@ class TestSetupProduction(TestBenchBase):
 		)
 
 	def assert_sudoers(self, user):
-		sudoers_file = "/etc/sudoers.d/frappe"
+		sudoers_file = "/etc/sudoers.d/capkpi"
 		service = which("service")
 		nginx = which("nginx")
 
@@ -100,7 +100,7 @@ class TestSetupProduction(TestBenchBase):
 			f = f.read()
 
 			tests = [
-				f"program:{bench_name}-frappe-web",
+				f"program:{bench_name}-capkpi-web",
 				f"program:{bench_name}-redis-cache",
 				f"program:{bench_name}-redis-queue",
 				f"program:{bench_name}-redis-socketio",
@@ -115,20 +115,20 @@ class TestSetupProduction(TestBenchBase):
 			if use_rq:
 				tests.extend(
 					[
-						f"program:{bench_name}-frappe-schedule",
-						f"program:{bench_name}-frappe-default-worker",
-						f"program:{bench_name}-frappe-short-worker",
-						f"program:{bench_name}-frappe-long-worker",
+						f"program:{bench_name}-capkpi-schedule",
+						f"program:{bench_name}-capkpi-default-worker",
+						f"program:{bench_name}-capkpi-short-worker",
+						f"program:{bench_name}-capkpi-long-worker",
 					]
 				)
 
 			else:
 				tests.extend(
 					[
-						f"program:{bench_name}-frappe-workerbeat",
-						f"program:{bench_name}-frappe-worker",
-						f"program:{bench_name}-frappe-longjob-worker",
-						f"program:{bench_name}-frappe-async-worker",
+						f"program:{bench_name}-capkpi-workerbeat",
+						f"program:{bench_name}-capkpi-worker",
+						f"program:{bench_name}-capkpi-longjob-worker",
+						f"program:{bench_name}-capkpi-async-worker",
 					]
 				)
 
@@ -144,7 +144,7 @@ class TestSetupProduction(TestBenchBase):
 			out = get_cmd_output("supervisorctl status")
 
 		tests = [
-			r"{bench_name}-web:{bench_name}-frappe-web[\s]+RUNNING",
+			r"{bench_name}-web:{bench_name}-capkpi-web[\s]+RUNNING",
 			# Have commented for the time being. Needs to be uncommented later on. Bench is failing on travis because of this.
 			# It works on one bench and fails on another.giving FATAL or BACKOFF (Exited too quickly (process log may have details))
 			# "{bench_name}-web:{bench_name}-node-socketio[\s]+RUNNING",
@@ -156,20 +156,20 @@ class TestSetupProduction(TestBenchBase):
 		if use_rq:
 			tests.extend(
 				[
-					r"{bench_name}-workers:{bench_name}-frappe-schedule[\s]+RUNNING",
-					r"{bench_name}-workers:{bench_name}-frappe-default-worker-0[\s]+RUNNING",
-					r"{bench_name}-workers:{bench_name}-frappe-short-worker-0[\s]+RUNNING",
-					r"{bench_name}-workers:{bench_name}-frappe-long-worker-0[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-schedule[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-default-worker-0[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-short-worker-0[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-long-worker-0[\s]+RUNNING",
 				]
 			)
 
 		else:
 			tests.extend(
 				[
-					r"{bench_name}-workers:{bench_name}-frappe-workerbeat[\s]+RUNNING",
-					r"{bench_name}-workers:{bench_name}-frappe-worker[\s]+RUNNING",
-					r"{bench_name}-workers:{bench_name}-frappe-longjob-worker[\s]+RUNNING",
-					r"{bench_name}-workers:{bench_name}-frappe-async-worker[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-workerbeat[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-worker[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-longjob-worker[\s]+RUNNING",
+					r"{bench_name}-workers:{bench_name}-capkpi-async-worker[\s]+RUNNING",
 				]
 			)
 

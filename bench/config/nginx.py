@@ -252,9 +252,9 @@ def use_wildcard_certificate(bench_path, ret):
 	"""
 	stored in common_site_config.json as:
 	"wildcard": {
-	        "domain": "*.erpnext.com",
-	        "ssl_certificate": "/path/to/erpnext.com.cert",
-	        "ssl_certificate_key": "/path/to/erpnext.com.key"
+	        "domain": "*.capkpi.com",
+	        "ssl_certificate": "/path/to/capkpi.com.cert",
+	        "ssl_certificate_key": "/path/to/capkpi.com.key"
 	}
 	"""
 	from bench.bench import Bench
@@ -280,7 +280,7 @@ def use_wildcard_certificate(bench_path, ret):
 			continue
 
 		if (site.get("domain") or site["name"]).endswith(domain):
-			# example: ends with .erpnext.com
+			# example: ends with .capkpi.com
 			site["ssl_certificate"] = ssl_certificate
 			site["ssl_certificate_key"] = ssl_certificate_key
 			site["wildcard"] = 1

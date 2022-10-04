@@ -17,7 +17,7 @@ from bench.exceptions import (
 from bench.app import get_repo_dir
 
 
-def is_version_upgrade(app="frappe", bench_path=".", branch=None):
+def is_version_upgrade(app="capkpi", bench_path=".", branch=None):
 	upstream_version = get_upstream_version(app=app, branch=branch, bench_path=bench_path)
 
 	if not upstream_version:
@@ -161,9 +161,9 @@ def get_upstream_version(app, branch=None, bench_path="."):
 	return get_version_from_string(contents)
 
 
-def get_current_frappe_version(bench_path="."):
+def get_current_capkpi_version(bench_path="."):
 	try:
-		return get_major_version(get_current_version("frappe", bench_path=bench_path))
+		return get_major_version(get_current_version("capkpi", bench_path=bench_path))
 	except OSError:
 		return 0
 

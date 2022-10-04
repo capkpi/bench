@@ -8,7 +8,7 @@ default_config = {
 	"restart_systemd_on_update": False,
 	"serve_default_site": True,
 	"rebase_on_pull": False,
-	"frappe_user": getpass.getuser(),
+	"capkpi_user": getpass.getuser(),
 	"shallow_clone": True,
 	"background_workers": 1,
 	"use_redis_auth": False,
@@ -21,7 +21,7 @@ def setup_config(bench_path):
 	bench_config = get_config(bench_path)
 	bench_config.update(default_config)
 	bench_config.update(get_gunicorn_workers())
-	update_config_for_frappe(bench_config, bench_path)
+	update_config_for_capkpi(bench_config, bench_path)
 
 	put_config(bench_config, bench_path)
 
@@ -62,7 +62,7 @@ def get_gunicorn_workers():
 	return {"gunicorn_workers": multiprocessing.cpu_count() * 2 + 1}
 
 
-def update_config_for_frappe(config, bench_path):
+def update_config_for_capkpi(config, bench_path):
 	ports = make_ports(bench_path)
 
 	for key in ("redis_cache", "redis_queue", "redis_socketio"):
