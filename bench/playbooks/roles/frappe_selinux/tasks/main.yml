@@ -12,14 +12,14 @@
   register: enabled_modules
   when: ansible_distribution == 'CentOS'
 
-- name: Copy frappe_selinux policy
-  copy: src=frappe_selinux.te dest=/root/frappe_selinux.te
-  register: dest_frappe_selinux_te
+- name: Copy capkpi_selinux policy
+  copy: src=capkpi_selinux.te dest=/root/capkpi_selinux.te
+  register: dest_capkpi_selinux_te
   when: ansible_distribution == 'CentOS'
 
-- name: Compile frappe_selinux policy
-  shell: "make -f /usr/share/selinux/devel/Makefile frappe_selinux.pp && semodule -i frappe_selinux.pp"
+- name: Compile capkpi_selinux policy
+  shell: "make -f /usr/share/selinux/devel/Makefile capkpi_selinux.pp && semodule -i capkpi_selinux.pp"
   args:
     chdir: /root/
-  when: "ansible_distribution == 'CentOS' and enabled_modules.stdout.find('frappe_selinux') == -1 or dest_frappe_selinux_te.changed"
+  when: "ansible_distribution == 'CentOS' and enabled_modules.stdout.find('capkpi_selinux') == -1 or dest_capkpi_selinux_te.changed"
 ...

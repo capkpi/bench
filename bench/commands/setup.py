@@ -10,7 +10,7 @@ from bench.utils import exec_cmd, run_playbook, which
 from bench.utils.cli import SugaredOption
 
 
-@click.group(help="Setup command group for enabling setting up a Frappe environment")
+@click.group(help="Setup command group for enabling setting up a CapKPI environment")
 def setup():
 	pass
 
@@ -90,7 +90,7 @@ def setup_redis():
 	generate_config(".")
 
 
-@click.command("fonts", help="Add Frappe fonts to system")
+@click.command("fonts", help="Add CapKPI fonts to system")
 def setup_fonts():
 	from bench.utils.system import setup_fonts
 
@@ -98,7 +98,7 @@ def setup_fonts():
 
 
 @click.command(
-	"production", help="Setup Frappe production environment for specific user"
+	"production", help="Setup CapKPI production environment for specific user"
 )
 @click.argument("user")
 @click.option("--yes", help="Yes to regeneration config", is_flag=True, default=False)

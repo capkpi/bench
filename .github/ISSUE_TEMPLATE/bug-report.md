@@ -7,7 +7,7 @@ labels: bug
 Issue: Bug report
 
 Please make sure your issue is reproducible on the latest bench version. The currently supported branches are:
- - PyPI [latest](https://pypi.org/project/frappe-bench/) 
+ - PyPI [latest](https://pypi.org/project/capkpi-bench/) 
  - master         (minor bug fixes)
  - v5.x           (Merged with develop on every release)
  - develop        (all updates)
@@ -42,8 +42,8 @@ If applicable, add screenshots to help explain your problem.
 
 Can be found out by running `bench version` in your respective bench folder.
 - Bench Branch:
-- Frappe Version:
-- ERPNext Version:
+- CapKPI Version:
+- erp Version:
 
 **Additional context** :page_facing_up:
 Add any other context about the problem here.

@@ -1,4 +1,4 @@
-# Deploying a, developer/production-ready ERPNext website with Ansible
+# Deploying a, developer/production-ready erp website with Ansible
 
 ## Supported Platforms
 	- Debian 8, 9

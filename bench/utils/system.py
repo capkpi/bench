@@ -11,10 +11,10 @@ from bench.utils import (
 	exec_cmd,
 	get_process_manager,
 	log,
-	run_frappe_cmd,
+	run_capkpi_cmd,
 	sudoers_file,
 	which,
-	is_valid_frappe_branch,
+	is_valid_capkpi_branch,
 )
 from bench.utils.bench import build_assets, clone_apps_from
 from bench.utils.render import job
@@ -26,8 +26,8 @@ def init(
 	apps_path=None,
 	no_procfile=False,
 	no_backups=False,
-	frappe_path=None,
-	frappe_branch=None,
+	capkpi_path=None,
+	capkpi_branch=None,
 	verbose=False,
 	clone_from=None,
 	skip_redis_config_generation=False,
@@ -43,7 +43,7 @@ def init(
 	* setup env for the bench
 	* setup config (dir/pids/redis/procfile) for the bench
 	* setup patches.txt for bench
-	* clone & install frappe
+	* clone & install capkpi
 	        * install python & node dependencies
 	        * build assets
 	* setup backups crontab
@@ -74,11 +74,11 @@ def init(
 
 	# remote apps
 	else:
-		frappe_path = frappe_path or "https://github.com/frappe/frappe.git"
-		is_valid_frappe_branch(frappe_path=frappe_path, frappe_branch=frappe_branch)
+		capkpi_path = capkpi_path or "https://github.com/capkpi/capkpi.git"
+		is_valid_capkpi_branch(capkpi_path=capkpi_path, capkpi_branch=capkpi_branch)
 		get_app(
-			frappe_path,
-			branch=frappe_branch,
+			capkpi_path,
+			branch=capkpi_branch,
 			bench_path=path,
 			skip_assets=True,
 			verbose=verbose,
@@ -93,7 +93,7 @@ def init(
 	if install_app:
 		get_app(
 			install_app,
-			branch=frappe_branch,
+			branch=capkpi_branch,
 			bench_path=path,
 			skip_assets=True,
 			verbose=verbose,
@@ -120,8 +120,8 @@ def setup_sudoers(user):
 		if set_permissions:
 			os.chmod("/etc/sudoers", 0o440)
 
-	template = bench.config.env().get_template("frappe_sudoers")
-	frappe_sudoers = template.render(
+	template = bench.config.env().get_template("capkpi_sudoers")
+	capkpi_sudoers = template.render(
 		**{
 			"user": user,
 			"service": which("service"),
@@ -132,7 +132,7 @@ def setup_sudoers(user):
 	)
 
 	with open(sudoers_file, "w") as f:
-		f.write(frappe_sudoers)
+		f.write(capkpi_sudoers)
 
 	os.chmod(sudoers_file, 0o440)
 	log(f"Sudoers was set up for user {user}", level=1)
@@ -161,11 +161,11 @@ def start(no_dev=False, concurrency=None, procfile=None, no_prefix=False, procma
 
 
 def migrate_site(site, bench_path="."):
-	run_frappe_cmd("--site", site, "migrate", bench_path=bench_path)
+	run_capkpi_cmd("--site", site, "migrate", bench_path=bench_path)
 
 
 def backup_site(site, bench_path="."):
-	run_frappe_cmd("--site", site, "backup", bench_path=bench_path)
+	run_capkpi_cmd("--site", site, "backup", bench_path=bench_path)
 
 
 def backup_all_sites(bench_path="."):
@@ -175,21 +175,21 @@ def backup_all_sites(bench_path="."):
 		backup_site(site, bench_path=bench_path)
 
 
-def fix_prod_setup_perms(bench_path=".", frappe_user=None):
+def fix_prod_setup_perms(bench_path=".", capkpi_user=None):
 	from glob import glob
 	from bench.bench import Bench
 
-	frappe_user = frappe_user or Bench(bench_path).conf.get("frappe_user")
+	capkpi_user = capkpi_user or Bench(bench_path).conf.get("capkpi_user")
 
-	if not frappe_user:
-		print("frappe user not set")
+	if not capkpi_user:
+		print("capkpi user not set")
 		sys.exit(1)
 
 	globs = ["logs/*", "config/*"]
 	for glob_name in globs:
 		for path in glob(glob_name):
-			uid = pwd.getpwnam(frappe_user).pw_uid
-			gid = grp.getgrnam(frappe_user).gr_gid
+			uid = pwd.getpwnam(capkpi_user).pw_uid
+			gid = grp.getgrnam(capkpi_user).gr_gid
 			os.chown(path, uid, gid)
 
 
@@ -199,7 +199,7 @@ def setup_fonts():
 	if os.path.exists("/etc/fonts_backup"):
 		return
 
-	exec_cmd("git clone https://github.com/frappe/fonts.git", cwd="/tmp")
+	exec_cmd("git clone https://github.com/capkpi/fonts.git", cwd="/tmp")
 	os.rename("/etc/fonts", "/etc/fonts_backup")
 	os.rename("/usr/share/fonts", "/usr/share/fonts_backup")
 	os.rename(os.path.join(fonts_path, "etc_fonts"), "/etc/fonts")

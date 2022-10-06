@@ -43,7 +43,7 @@
 
 - name: Add additional conf for MariaDB 10.2 in mariadb.conf.d
   blockinfile:
-    path: /etc/mysql/mariadb.conf.d/erpnext.cnf
+    path: /etc/mysql/mariadb.conf.d/erp.cnf
     block: |
       [mysqld]
       pid-file        = /var/run/mysqld/mysqld.pid

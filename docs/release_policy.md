@@ -39,7 +39,7 @@
 
 - QA will use staging for testing.
 
-- Deploy staging branch on frappe.io, erpnext.org, frappe.erpnext.com. 
+- Deploy staging branch on capkpi.io, erp.org, capkpi.capkpi.com. 
 
 - Only regression and security fixes can be cherry-picked into staging
 

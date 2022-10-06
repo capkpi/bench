@@ -15,12 +15,12 @@ from bench.bench import Bench
 
 PYTHON_VER = sys.version_info
 
-FRAPPE_BRANCH = "version-12"
+CAPKPI_BRANCH = "version-12"
 if PYTHON_VER.major == 3:
 	if PYTHON_VER.minor >= 10:
-		FRAPPE_BRANCH = "develop"
+		CAPKPI_BRANCH = "develop"
 	if 7 >= PYTHON_VER.minor >= 9:
-		FRAPPE_BRANCH = "version-13"
+		CAPKPI_BRANCH = "version-13"
 
 
 class TestBenchBase(unittest.TestCase):
@@ -57,7 +57,7 @@ class TestBenchBase(unittest.TestCase):
 	def assert_folders(self, bench_name):
 		for folder in paths_in_bench:
 			self.assert_exists(bench_name, folder)
-		self.assert_exists(bench_name, "apps", "frappe")
+		self.assert_exists(bench_name, "apps", "capkpi")
 
 	def assert_virtual_env(self, bench_name):
 		bench_path = os.path.abspath(bench_name)
@@ -103,11 +103,11 @@ class TestBenchBase(unittest.TestCase):
 
 	def init_bench(self, bench_name, **kwargs):
 		self.benches.append(bench_name)
-		frappe_tmp_path = "/tmp/frappe"
+		capkpi_tmp_path = "/tmp/capkpi"
 
-		if not os.path.exists(frappe_tmp_path):
+		if not os.path.exists(capkpi_tmp_path):
 			exec_cmd(
-				f"git clone https://github.com/frappe/frappe -b {FRAPPE_BRANCH} --depth 1 --origin upstream {frappe_tmp_path}"
+				f"git clone https://github.com/capkpi/capkpi -b {CAPKPI_BRANCH} --depth 1 --origin upstream {capkpi_tmp_path}"
 			)
 
 		kwargs.update(
@@ -115,15 +115,15 @@ class TestBenchBase(unittest.TestCase):
 				python=sys.executable,
 				no_procfile=True,
 				no_backups=True,
-				frappe_path=frappe_tmp_path,
+				capkpi_path=capkpi_tmp_path,
 			)
 		)
 
 		if not os.path.exists(os.path.join(self.benches_path, bench_name)):
 			init(bench_name, **kwargs)
 			exec_cmd(
-				"git remote set-url upstream https://github.com/frappe/frappe",
-				cwd=os.path.join(self.benches_path, bench_name, "apps", "frappe"),
+				"git remote set-url upstream https://github.com/capkpi/capkpi",
+				cwd=os.path.join(self.benches_path, bench_name, "apps", "capkpi"),
 			)
 
 	def file_exists(self, path):

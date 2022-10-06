@@ -6,12 +6,12 @@ import unittest
 from bench.app import App
 from bench.bench import Bench
 from bench.exceptions import InvalidRemoteException
-from bench.utils import is_valid_frappe_branch
+from bench.utils import is_valid_capkpi_branch
 
 
 class TestUtils(unittest.TestCase):
 	def test_app_utils(self):
-		git_url = "https://github.com/frappe/frappe"
+		git_url = "https://github.com/capkpi/capkpi"
 		branch = "develop"
 		app = App(name=git_url, branch=branch, bench=Bench("."))
 		self.assertTrue(
@@ -22,26 +22,26 @@ class TestUtils(unittest.TestCase):
 					app.tag == branch,
 					app.is_url is True,
 					app.on_disk is False,
-					app.org == "frappe",
+					app.org == "capkpi",
 					app.url == git_url,
 				]
 			)
 		)
 
-	def test_is_valid_frappe_branch(self):
+	def test_is_valid_capkpi_branch(self):
 		with self.assertRaises(InvalidRemoteException):
-			is_valid_frappe_branch(
-				"https://github.com/frappe/frappe.git", frappe_branch="random-branch"
+			is_valid_capkpi_branch(
+				"https://github.com/capkpi/capkpi.git", capkpi_branch="random-branch"
 			)
-			is_valid_frappe_branch(
-				"https://github.com/random/random.git", frappe_branch="random-branch"
+			is_valid_capkpi_branch(
+				"https://github.com/random/random.git", capkpi_branch="random-branch"
 			)
 
-		is_valid_frappe_branch(
-			"https://github.com/frappe/frappe.git", frappe_branch="develop"
+		is_valid_capkpi_branch(
+			"https://github.com/capkpi/capkpi.git", capkpi_branch="develop"
 		)
-		is_valid_frappe_branch(
-			"https://github.com/frappe/frappe.git", frappe_branch="v13.29.0"
+		is_valid_capkpi_branch(
+			"https://github.com/capkpi/capkpi.git", capkpi_branch="v13.29.0"
 		)
 
 	def test_app_states(self):
@@ -56,7 +56,7 @@ class TestUtils(unittest.TestCase):
 		self.assertTrue(hasattr(fake_bench.apps, "states"))
 
 		fake_bench.apps.states = {
-			"frappe": {
+			"capkpi": {
 				"resolution": {"branch": "develop", "commit_hash": "234rwefd"},
 				"version": "14.0.0-dev",
 			}
@@ -65,40 +65,40 @@ class TestUtils(unittest.TestCase):
 
 		self.assertEqual(fake_bench.apps.states, {})
 
-		frappe_path = os.path.join(bench_dir, "apps", "frappe")
+		capkpi_path = os.path.join(bench_dir, "apps", "capkpi")
 
-		os.makedirs(os.path.join(frappe_path, "frappe"))
+		os.makedirs(os.path.join(capkpi_path, "capkpi"))
 
-		subprocess.run(["git", "init"], cwd=frappe_path, capture_output=True, check=True)
+		subprocess.run(["git", "init"], cwd=capkpi_path, capture_output=True, check=True)
 
-		with open(os.path.join(frappe_path, "frappe", "__init__.py"), "w+") as f:
+		with open(os.path.join(capkpi_path, "capkpi", "__init__.py"), "w+") as f:
 			f.write("__version__ = '11.0'")
 
-		subprocess.run(["git", "add", "."], cwd=frappe_path, capture_output=True, check=True)
+		subprocess.run(["git", "add", "."], cwd=capkpi_path, capture_output=True, check=True)
 		subprocess.run(
 			["git", "config", "user.email", "bench-test_app_states@gha.com"],
-			cwd=frappe_path,
+			cwd=capkpi_path,
 			capture_output=True,
 			check=True,
 		)
 		subprocess.run(
 			["git", "config", "user.name", "App States Test"],
-			cwd=frappe_path,
+			cwd=capkpi_path,
 			capture_output=True,
 			check=True,
 		)
 		subprocess.run(
-			["git", "commit", "-m", "temp"], cwd=frappe_path, capture_output=True, check=True
+			["git", "commit", "-m", "temp"], cwd=capkpi_path, capture_output=True, check=True
 		)
 
-		fake_bench.apps.update_apps_states(app_name="frappe")
+		fake_bench.apps.update_apps_states(app_name="capkpi")
 
-		self.assertIn("frappe", fake_bench.apps.states)
-		self.assertIn("version", fake_bench.apps.states["frappe"])
-		self.assertEqual("11.0", fake_bench.apps.states["frappe"]["version"])
+		self.assertIn("capkpi", fake_bench.apps.states)
+		self.assertIn("version", fake_bench.apps.states["capkpi"])
+		self.assertEqual("11.0", fake_bench.apps.states["capkpi"]["version"])
 
 		shutil.rmtree(bench_dir)
 
 	def test_ssh_ports(self):
-		app = App("git@github.com:22:frappe/frappe")
-		self.assertEqual((app.use_ssh, app.org, app.repo), (True, "frappe", "frappe"))
+		app = App("git@github.com:22:capkpi/capkpi")
+		self.assertEqual((app.use_ssh, app.org, app.repo), (True, "capkpi", "capkpi"))
